@@ -1,11 +1,11 @@
-public class Jugadores {
+public class Jugador {
     public static final String TABLA="Jugadores";
     private int codJugador;
     private String nombre;
     private String nombreEquipo;
     private int edad;
 
-    public Jugadores(int cod_Jugador, String nombre, String nombre_equipo, int edad) {
+    public Jugador(int cod_Jugador, String nombre, int edad, String nombre_equipo) {
         codJugador = cod_Jugador;
         this.nombre = nombre;
         nombreEquipo = nombre_equipo;

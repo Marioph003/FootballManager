@@ -5,15 +5,15 @@ USE Futbol;
 create table Equipo(
 Puntos int,
 Nombre varchar (50) primary key,
-Nº_Jugadores int
+N_Jugadores int
 );
 
-create table Jugadores(
+create table Jugador(
 Cod_Jugador int primary key,
 Nombre varchar (50),
 Nombre_equipo varchar (50),
 Edad int,
-constraint Jug foreign key (Nombre_Equipo) references Equipo (Nombre)
+constraint fk foreign key (Nombre_Equipo) references Equipo (Nombre)
 );
 
 create table Participa(
@@ -21,7 +21,7 @@ N_Asistencias int,
 N_Goles int,
 Cod_Jugador int,
 Nombre_Equipo varchar(50),
-constraint Par foreign key (Cod_Jugador) references Jugadores (Cod_Jugador),
+constraint fk foreign key (Cod_Jugador) references Jugadores (Cod_Jugador),
 constraint Par2 foreign key (Nombre_Equipo) references Equipo (Nombre),
 constraint Par3 primary key (Nombre_Equipo, Cod_Jugador)
 );

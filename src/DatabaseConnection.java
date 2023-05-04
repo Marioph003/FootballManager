@@ -1,6 +1,4 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DatabaseConnection {
     Connection conexion;
@@ -8,8 +6,8 @@ public class DatabaseConnection {
         try {
             //Obtenemos un objeto de conexion
             //usando una cadena de conexion
-            conexion = DriverManager.getConnection("jdbc:mysql:/localhost:3306" +
-                    "/Futbol(proyecto), Mario, 03062003mph");
+            conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/Futbol",
+                    "Mario", "03062003mph");
 
             System.out.println("Se ha establecido la conexion exitosamente");
 
@@ -37,4 +35,23 @@ public class DatabaseConnection {
                 throw new RuntimeException(e);
             }
         }
+    public void mostrarDatos(ResultSet rs) throws SQLException {
+        ResultSetMetaData md = rs.getMetaData();
+        int columnCount = md.getColumnCount();
+
+        // Imprimir los nombres de las columnas
+        for (int i = 1; i <= columnCount; i++) {
+            System.out.print(md.getColumnName(i) + "\t");
+        }
+        System.out.println();
+
+        // Imprimir los datos de cada fila
+        while (rs.next()) {
+            for (int i = 1; i <= columnCount; i++) {
+                System.out.print(rs.getObject(i) + "\t");
+            }
+            System.out.println();
+        }
     }
+
+}
