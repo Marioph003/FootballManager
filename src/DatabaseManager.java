@@ -1,12 +1,11 @@
-import org.jetbrains.annotations.NotNull;
-
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class DatabaseManager {
     private Connection conexion;
+
     {
         try {
             conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/Futbol",
@@ -37,8 +36,9 @@ public class DatabaseManager {
             throw new RuntimeException(e);
         }
     }
+
     //Metodo para buscar un jugador por 2 parametros
-    public List<Jugador> buscarJugadores(String nombre, int edad){
+    public List<Jugador> buscarJugadores(String nombre, int edad) {
         List<Jugador> jugadores = new ArrayList<Jugador>();
         //Esta es la consulta sql que voy a usar para filtrar
         String sql = "select * from Jugador where Nombre = ? and Edad = ?";
@@ -50,47 +50,96 @@ public class DatabaseManager {
             //Una vez preparada la ejecutamos
             ResultSet rs = ps.executeQuery();
 
-            while (rs.next()){
-            int id = rs.getInt("Cod_Jugador");
-            String nombreJugador = rs.getString("Nombre");
-            int edadJugador = rs.getInt("Edad");
-            String nombreEquipo = rs.getString("Nombre_equipo");
+            while (rs.next()) {
+                int id = rs.getInt("Cod_Jugador");
+                String nombreJugador = rs.getString("Nombre");
+                int edadJugador = rs.getInt("Edad");
+                String nombreEquipo = rs.getString("Nombre_equipo");
 
-            jugadores.add(new Jugador
-                    (id, nombreJugador, edadJugador, nombreEquipo));
+                jugadores.add(new Jugador
+                        (id, nombreJugador, edadJugador, nombreEquipo));
 
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return jugadores;
     }
-    //List<Map<String, Object>>, esto guarda una lista en la que cada uno de los elementos
-    //Son un mapa, lo voy a utilizar para almacenar los datos de la base de datos
-    public List<Map<String, Object>> buscarJugadores2 (String tabla,
-                                                       @NotNull Map<String, Object> parametros){
-    PreparedStatement ps = null;
-    ResultSet rs = null;
-    List<Map<String, Object>> resultados = new ArrayList<>();
 
-        StringBuilder sql = new StringBuilder("select * from");
-        sql.append(tabla).append("where");
+    public List<Equipo> buscarEquipos(String nombre, int puntos) {
+        List<Equipo> equipos = new ArrayList<Equipo>();
+        //Esta es la consulta sql que voy a usar para filtrar
+        String sql = "select * from Equipo where Nombre = ? and Puntos = ?";
+        try {
+            //Preparamos la consulta
+            PreparedStatement ps = conexion.prepareStatement(sql);
+            ps.setString(1, nombre);
+            ps.setInt(2, puntos);
+            //Una vez preparada la ejecutamos
+            ResultSet rs = ps.executeQuery();
 
-        //Voy a construir la clausula where apartir de los parametros
-        for (String columna: parametros.keySet()) {
-            sql.append(columna).append("= ? ");
+            while (rs.next()) {
+                int puntosEquipo = rs.getInt("Puntos");
+                String nombreEquipo = rs.getString("Nombre");
+                int numJugadores = rs.getInt("N_Jugadores");
 
-            try {
-                ps = conexion.prepareStatement(sql.toString());
-                int i = 1;
+                equipos.add(new Equipo(puntosEquipo, nombreEquipo, numJugadores));
 
-                for (Object valor: parametros.values()) {
-
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return null;
+        return equipos;
+    }
+
+    public List<Estadio> buscarEstadios(String nombre, int aforo) {
+        List<Estadio> estadios = new ArrayList<Estadio>();
+        //Esta es la consulta sql que voy a usar para filtrar
+        String sql = "select * from Estadio where Nombre = ? and Aforo = ?";
+        try {
+            //Preparamos la consulta
+            PreparedStatement ps = conexion.prepareStatement(sql);
+            ps.setString(1, nombre);
+            ps.setInt(2, aforo);
+            //Una vez preparada la ejecutamos
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int puntosEquipo = rs.getInt("Aforo");
+                String nombreEquipo = rs.getString("Nombre");
+                LocalDate fechaConstruccion = LocalDate.parse(rs.getDate("Fecha_Construccion").toString());
+
+                estadios.add(new Estadio(puntosEquipo, nombreEquipo, fechaConstruccion));
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return estadios;
+    }
+
+    public List<Partido> buscarPartidos(int duracion, int cod_Partido) {
+        List<Partido> partidos = new ArrayList<Partido>();
+        //Esta es la consulta sql que voy a usar para filtrar
+        String sql = "select * from Partido where Duracion = ? and Cod_Partido = ?";
+        try {
+            //Preparamos la consulta
+            PreparedStatement ps = conexion.prepareStatement(sql);
+            ps.setInt(1, duracion);
+            ps.setInt(2, cod_Partido);
+            //Una vez preparada la ejecutamos
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int duracionPartido = rs.getInt("Duracion");
+                int codPartido = rs.getInt("Cod_Partido");
+
+                partidos.add(new Partido(duracionPartido, codPartido));
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return partidos;
     }
 }

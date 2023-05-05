@@ -1,7 +1,7 @@
 import java.time.LocalDate;
+import java.util.Scanner;
 
-public class Estadio {
-    public static final String TABLA="Estadio";
+public class Estadio implements FootballManagerInterface{
     private int aforo;
     private String nombre;
     private LocalDate fechaConstruccion;
@@ -43,5 +43,26 @@ public class Estadio {
                 ", nombre='" + nombre + '\'' +
                 ", fechaConstruccion=" + fechaConstruccion +
                 '}';
+    }
+    @Override
+    public int getId() {
+        return 0;
+    }
+
+    @Override
+    public void setId(int id) {
+
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public void setName(String name) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Introduce el nombre de la tabla");
+        name = sc.nextLine();
     }
 }

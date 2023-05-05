@@ -1,13 +1,14 @@
-public class Equipo {
-    private static final String TABLA="Equipo";
+import java.util.Scanner;
+
+public class Equipo implements FootballManagerInterface{
     private int puntos;
     private String nombre;
-    private String numJugadores;
+    private int numJugadores;
 
-    public Equipo(int puntos, String nombre, String nº_Jugadores) {
+    public Equipo(int puntos, String nombre, int N_Jugadores) {
         this.puntos = puntos;
         this.nombre = nombre;
-        numJugadores = nº_Jugadores;
+        numJugadores = N_Jugadores;
     }
 
     public int getPuntos() {
@@ -26,11 +27,11 @@ public class Equipo {
         this.nombre = nombre;
     }
 
-    public String getNumJugadores() {
+    public int getNumJugadores() {
         return numJugadores;
     }
 
-    public void setNumJugadores(String numJugadores) {
+    public void setNumJugadores(int numJugadores) {
         this.numJugadores = numJugadores;
     }
 
@@ -41,5 +42,27 @@ public class Equipo {
                 ", nombre='" + nombre + '\'' +
                 ", numJugadores='" + numJugadores + '\'' +
                 '}';
+    }
+
+    @Override
+    public int getId() {
+        return 0;
+    }
+
+    @Override
+    public void setId(int id) {
+
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public void setName(String name) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Introduce el nombre de la tabla");
+        name = sc.nextLine();
     }
 }

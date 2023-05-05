@@ -1,5 +1,6 @@
-public class Jugador {
-    public static final String TABLA="Jugadores";
+import java.util.Scanner;
+
+public class Jugador implements FootballManagerInterface{
     private int codJugador;
     private String nombre;
     private String nombreEquipo;
@@ -52,5 +53,27 @@ public class Jugador {
                 ", nombreEquipo='" + nombreEquipo + '\'' +
                 ", edad=" + edad +
                 '}';
+    }
+
+    @Override
+    public int getId() {
+        return 0;
+    }
+
+    @Override
+    public void setId(int id) {
+
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public void setName(String name) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Introduce el nombre de la tabla");
+        name = sc.nextLine();
     }
 }

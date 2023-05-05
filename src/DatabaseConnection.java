@@ -1,7 +1,7 @@
 import java.sql.*;
 
 public class DatabaseConnection {
-    Connection conexion;
+    private Connection conexion;
      {
         try {
             //Obtenemos un objeto de conexion
