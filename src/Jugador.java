@@ -1,6 +1,7 @@
 import java.util.Scanner;
 
-public class Jugador implements FootballManagerInterface{
+public class Jugador implements FootballManagerInterface {
+    public static final String TABLA = "Jugador";
     private int codJugador;
     private String nombre;
     private String nombreEquipo;
@@ -11,6 +12,10 @@ public class Jugador implements FootballManagerInterface{
         this.nombre = nombre;
         nombreEquipo = nombre_equipo;
         this.edad = edad;
+    }
+
+    public Jugador() {
+
     }
 
     public int getCodJugador() {
@@ -53,27 +58,5 @@ public class Jugador implements FootballManagerInterface{
                 ", nombreEquipo='" + nombreEquipo + '\'' +
                 ", edad=" + edad +
                 '}';
-    }
-
-    @Override
-    public int getId() {
-        return 0;
-    }
-
-    @Override
-    public void setId(int id) {
-
-    }
-
-    @Override
-    public String getName() {
-        return null;
-    }
-
-    @Override
-    public void setName(String name) {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Introduce el nombre de la tabla");
-        name = sc.nextLine();
     }
 }

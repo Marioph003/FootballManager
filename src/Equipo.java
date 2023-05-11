@@ -1,6 +1,9 @@
+import java.sql.SQLException;
+import java.util.List;
 import java.util.Scanner;
 
-public class Equipo implements FootballManagerInterface{
+public class Equipo implements FootballManagerInterface {
+    public static final String TABLA = "Equipo";
     private int puntos;
     private String nombre;
     private int numJugadores;
@@ -9,6 +12,10 @@ public class Equipo implements FootballManagerInterface{
         this.puntos = puntos;
         this.nombre = nombre;
         numJugadores = N_Jugadores;
+    }
+
+    public Equipo() {
+
     }
 
     public int getPuntos() {
@@ -42,27 +49,5 @@ public class Equipo implements FootballManagerInterface{
                 ", nombre='" + nombre + '\'' +
                 ", numJugadores='" + numJugadores + '\'' +
                 '}';
-    }
-
-    @Override
-    public int getId() {
-        return 0;
-    }
-
-    @Override
-    public void setId(int id) {
-
-    }
-
-    @Override
-    public String getName() {
-        return null;
-    }
-
-    @Override
-    public void setName(String name) {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Introduce el nombre de la tabla");
-        name = sc.nextLine();
     }
 }

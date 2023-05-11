@@ -1,6 +1,7 @@
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -112,15 +113,52 @@ public class DatabaseManager2 {
             //Sirve para controlar el numero de columnas que hay
             int numColumnas = rsmd.getColumnCount();
 
-            while (rs.next()) {
-
                 //creamos un mapa donde vamos a guardar el nombre de las columnas
                 //Y el valor de cada una
+                Map<String, Object> fila = new HashMap<>();
+                resultados = new ArrayList<FootballManagerInterface>();
+                while (rs.next()) {
+                    // Recorremos todas las columnas del resultado y las guardamos en el mapa
+                    for (int j = 1; j <= numColumnas; j++) {
+                        String nombreColumna = rsmd.getColumnName(j);
+                        Object valorColumna = rs.getObject(j);
+                        fila.put(nombreColumna, valorColumna);
+                    }
 
-            }
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
+                    // Creamos el objeto correspondiente a la tabla y añadimos los datos de la fila
+                    if (tabla.equals(Equipo.TABLA)) {
+                        Equipo equipo = new Equipo();
+                        equipo.setNombre((String) fila.get("Nombre"));
+                        equipo.setPuntos((int) fila.get("Puntos"));
+                        equipo.setNumJugadores((int) fila.get("N_Jugadores"));
+                        //Añade cualquier otra propiedad que necesites
+                        resultados.add(equipo);
+                    } else if (tabla.equals(Jugador.TABLA)) {
+                        Jugador jugador = new Jugador();
+                        jugador.setNombre((String) fila.get("nombre"));
+                        jugador.setCodJugador((int) fila.get("Cod_Jugador"));
+                        jugador.setNombreEquipo((String) fila.get("Nombre_equipo"));
+                        jugador.setEdad((int) fila.get("Edad"));
+                        // Añade cualquier otra propiedad que necesites
+                        resultados.add(jugador);
+                    } else if (tabla.equals(Estadio.TABLA)) {
+                        Estadio estadio = new Estadio();
+                        estadio.setNombre((String) fila.get("nombre"));
+                        estadio.setAforo((int) fila.get("Aforo"));
+                        estadio.setFechaConstruccion((LocalDate) fila.get("Fecha_Construccion"));
+                        // Añade cualquier otra propiedad que necesites
+                        resultados.add(estadio);
+                    } else if (tabla.equals(Partido.TABLA)) {
+                        Partido partido = new Partido();
+                        partido.setDuracion((int) fila.get("Duracion"));
+                        partido.setCodPartido((int) fila.get("Cod_Partido"));
+                        // Añade cualquier otra propiedad que necesites
+                        resultados.add(partido);
+                    }
+                }
+                return resultados;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return resultados;
     }
 }

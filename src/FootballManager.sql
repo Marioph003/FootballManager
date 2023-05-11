@@ -13,7 +13,7 @@ Cod_Jugador int primary key,
 Nombre varchar (50),
 Nombre_equipo varchar (50),
 Edad int,
-constraint fk foreign key (Nombre_Equipo) references Equipo (Nombre)
+constraint Jug foreign key (Nombre_equipo) references Equipo (Nombre) on delete cascade on update cascade
 );
 
 create table Participa(
@@ -21,9 +21,9 @@ N_Asistencias int,
 N_Goles int,
 Cod_Jugador int,
 Nombre_Equipo varchar(50),
-constraint fk foreign key (Cod_Jugador) references Jugadores (Cod_Jugador),
-constraint Par2 foreign key (Nombre_Equipo) references Equipo (Nombre),
-constraint Par3 primary key (Nombre_Equipo, Cod_Jugador)
+constraint fk foreign key (Cod_Jugador) references Jugador (Cod_Jugador) on delete cascade,
+constraint fk1 foreign key (Nombre_equipo) references Equipo (Nombre) on delete cascade on update cascade,
+constraint fk2 primary key (Nombre_equipo, Cod_Jugador)
 );
 
 create table Partido(
@@ -41,9 +41,9 @@ create table Juega(
 Nombre_Equipo varchar (50),
 Cod_Partido int,
 Nombre_Estadio varchar (50),
-constraint Jue foreign key (Nombre_Equipo) references Equipo (Nombre),
-constraint Jue2 foreign key (Cod_Partido) references Partido (Cod_Partido),
-constraint Jue3 foreign key (Nombre_Estadio) references Estadio (Nombre),
+constraint Jue foreign key (Nombre_Equipo) references Equipo (Nombre) on delete cascade on update cascade,
+constraint Jue2 foreign key (Cod_Partido) references Partido (Cod_Partido) on delete cascade on update cascade,
+constraint Jue3 foreign key (Nombre_Estadio) references Estadio (Nombre) on delete cascade on update cascade,
 constraint Jue4 primary key (Nombre_Equipo, Cod_Partido, Nombre_Estadio)
 );
 
