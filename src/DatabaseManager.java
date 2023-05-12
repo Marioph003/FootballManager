@@ -1,6 +1,7 @@
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -426,5 +427,189 @@ public class DatabaseManager {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Elimina el jugador cuyo código coincide con el que se pasa como parámetro
+     * @param codJugador: Parametro para saber que registro de la base de datos voy a eliminar
+     * @return: voy a devolver un booleano, que si devuelve true quiere decir que se ha eliminado
+     * registro
+     */
+    public boolean eliminarJugadores(int codJugador){
+    //Preparamos las consultas
+        String sql = "delete from Jugador where Cod_Jugador = ?";
+        String sql2 = "delete from Participa where Cod_Jugador = ?";
+
+        //Creamos el PrepareStatement
+        try {
+            PreparedStatement psParticipa = conexion.prepareStatement(sql2);
+            //Asigno los valores de los parámetros
+            psParticipa.setInt(1, codJugador);
+            psParticipa.executeUpdate();
+
+            PreparedStatement psJugador = conexion.prepareStatement(sql);
+            //Asigno los valores de los parámetros
+            psJugador.setInt(1, codJugador);
+            int filasElminadas = psJugador.executeUpdate();
+
+            if (filasElminadas > 0){
+                System.out.println("Se han eliminado " + filasElminadas + " filas");
+                return true;
+            } else {
+                System.out.println("No se ha eliminado ningún registro");
+                return false;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public boolean eliminarEquipos(String nombreEquipo){
+        //Preparamos las consultas
+        String sql = "delete from Equipo where Nombre = ?";
+        String sql2 = "delete from Juega where Nombre_Equipo = ?";
+
+        //Creamos el PrepareStatement
+        try {
+            PreparedStatement psJuega = conexion.prepareStatement(sql2);
+            //Asigno los valores de los parámetros
+            psJuega.setString(1, nombreEquipo);
+            psJuega.executeUpdate();
+
+            PreparedStatement psEquipo = conexion.prepareStatement(sql);
+            //Asigno los valores de los parámetros
+            psEquipo.setString(1, nombreEquipo);
+            int filasElminadas = psEquipo.executeUpdate();
+
+            if (filasElminadas > 0){
+                System.out.println("Se han eliminado " + filasElminadas + " filas");
+                return true;
+            } else {
+                System.out.println("No se ha eliminado ningún registro");
+                return false;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public boolean eliminarPartido(int codPartido){
+        //Preparamos las consultas
+        String sql = "delete from Partido where Cod_Partido = ?";
+
+        //Creamos el PrepareStatement
+        try {
+            PreparedStatement psPartido = conexion.prepareStatement(sql);
+            //Asigno los valores de los parámetros
+            psPartido.setInt(1, codPartido);
+            int filasElminadas = psPartido.executeUpdate();
+
+            if (filasElminadas > 0){
+                System.out.println("Se han eliminado " + filasElminadas + " filas");
+                return true;
+            } else {
+                System.out.println("No se ha eliminado ningún registro");
+                return false;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public boolean eliminarEstadios(String nombreEstadio){
+        //Preparamos las consultas
+        String sql = "delete from Estadio where Nombre = ?";
+        String sql2 = "delete from Juega where Nombre_Estadio = ?";
+
+        //Creamos el PrepareStatement
+        try {
+            PreparedStatement psJuega = conexion.prepareStatement(sql2);
+            //Asigno los valores de los parámetros
+            psJuega.setString(1, nombreEstadio);
+            psJuega.executeUpdate();
+
+            PreparedStatement psEstadio = conexion.prepareStatement(sql);
+            //Asigno los valores de los parámetros
+            psEstadio.setString(1, nombreEstadio);
+            int filasElminadas = psEstadio.executeUpdate();
+
+            if (filasElminadas > 0){
+                System.out.println("Se han eliminado " + filasElminadas + " filas");
+                return true;
+            } else {
+                System.out.println("No se ha eliminado ningún registro");
+                return false;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public boolean aniadirEquipos(List<Equipo> equipos){
+        String sql = "INSERT INTO Equipo(Puntos, Nombre, N_Jugadores) VALUES (?, ?, ?)";
+        try {
+            PreparedStatement ps = conexion.prepareStatement(sql);
+            for (Equipo equipo: equipos) {
+                ps.setInt(1, equipo.getPuntos());
+                ps.setString(2, equipo.getNombre());
+                ps.setInt(3, equipo.getNumJugadores());
+                ps.addBatch();
+            }
+            //Añado las filas/registros insertados en la base de datos y después
+            //con la clase Arrays sumo todos los registros
+            int[] filasInsertadas = ps.executeBatch();
+            int totalFilasInsertadas = Arrays.stream(filasInsertadas).sum();
+
+            ps.clearParameters();
+
+            if (totalFilasInsertadas > 0){
+                System.out.println("Se han insertado " + totalFilasInsertadas +
+                        " filas en la base de datos");
+                return true;
+            } else {
+                System.out.println("No se ha insertado ningún registro en la base de datos");
+                return  false;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public boolean aniadirJugadores(List<Jugador> jugadores){
+        String sqlJugador = "INSERT INTO Jugador(Cod_Jugador, Nombre, Nombre_equipo, Edad) VALUES (?, ?, ?, ?)";
+        String sqlEquipo = "UPDATE Jugador SET Nombre_equipo = ? WHERE Cod_Jugador = ?";
+        try {
+            PreparedStatement ps = conexion.prepareStatement(sqlJugador);
+            PreparedStatement psEquipo = conexion.prepareStatement(sqlEquipo);
+            for (Jugador jugador: jugadores) {
+                ps.setInt(1, jugador.getCodJugador());
+                ps.setString(2, jugador.getNombre());
+                ps.setString(3, jugador.getNombreEquipo());
+                ps.setInt(4, jugador.getEdad());
+                ps.addBatch();
+
+                psEquipo.setString(1, jugador.getNombreEquipo());
+                psEquipo.setInt(2, jugador.getCodJugador());
+                psEquipo.addBatch();
+            }
+            //Añado las filas/registros insertados en la base de datos y después
+            //con la clase Arrays sumo todos los registros
+            int[] filasInsertadas = ps.executeBatch();
+            int[] filasInsertadasEquipo = psEquipo.executeBatch();
+
+            int totalFilasInsertadasEquipo = Arrays.stream(filasInsertadasEquipo).sum();
+            int totalFilasInsertadasJugador = Arrays.stream(filasInsertadas).sum();
+
+            ps.clearParameters();
+            psEquipo.clearParameters();
+
+            if (totalFilasInsertadasJugador > 0 && totalFilasInsertadasEquipo > 0){
+                System.out.println("Se han insertado " + totalFilasInsertadasJugador +
+                        " filas en la tabla Jugador y actualizado " + totalFilasInsertadasEquipo +
+                        " filas en la tabla Equipo");
+                return true;
+            } else {
+                System.out.println("No se ha insertado ningún registro en la base de datos");
+                return  false;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
 
