@@ -6,47 +6,26 @@ import java.util.List;
 import java.util.Map;
 
 public class DatabaseManager {
+    private DatabaseConnection databaseConnection;
     private Connection conexion;
-
-    {
-        try {
-            conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/Futbol",
-                    "Mario", "03062003mph");
-            //Solicitamos un ResultSet de una consulta sql, esto va a hacer que accedamos
-            //a una tabla en concreto de mi base de datos
-            /*Statement stmnt = conexion.createStatement();
-            ResultSet rs = stmnt.executeQuery("select * from Equipo");
-            //Selecciono el registro Puntos de la tabla Equipo
-            if (rs.next()) {
-                rs.getInt("Puntos");
-            } else {
-                System.out.println("No se ha encontrado");
-            }
-            //Selecciono el registro Nombre de la tabla Equipo
-            if (rs.next()) {
-                rs.getString("Nombre");
-            } else {
-                System.out.println("No se ha encontrado");
-            }
-            //Selecciono el registro Nº_Jugadores de la tabla Equipo
-            if (rs.next()) {
-                rs.getInt("N_Jugadores");
-            } else {
-                System.out.println("No se ha encontrado");
-            }*/
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public DatabaseManager(@NonNull DatabaseConnection connection){
+        this.databaseConnection = connection;
     }
 
     //Metodo para buscar un jugador por 2 parametros
     public List<Jugador> buscarJugadores(String nombre, int edad) {
+        Connection connection=null;
         List<Jugador> jugadores = new ArrayList<Jugador>();
         //Esta es la consulta sql que voy a usar para filtrar
         String sql = "select * from Jugador where Nombre = ? and Edad = ?";
         try {
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+
             //Preparamos la consulta
-            PreparedStatement ps = conexion.prepareStatement(sql);
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, nombre);
             ps.setInt(2, edad);
             //Una vez preparada la ejecutamos
@@ -64,17 +43,25 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }finally {
+            this.databaseConnection.disconnect();
         }
         return jugadores;
     }
 
     public List<Equipo> buscarEquipos(String nombre, int puntos) {
+        Connection connection=null;
         List<Equipo> equipos = new ArrayList<Equipo>();
         //Esta es la consulta sql que voy a usar para filtrar
         String sql = "select * from Equipo where Nombre = ? and Puntos = ?";
         try {
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+
             //Preparamos la consulta
-            PreparedStatement ps = conexion.prepareStatement(sql);
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, nombre);
             ps.setInt(2, puntos);
             //Una vez preparada la ejecutamos
@@ -90,17 +77,25 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            this.databaseConnection.disconnect();
         }
         return equipos;
     }
 
     public List<Estadio> buscarEstadios(String nombre, int aforo) {
+        Connection connection=null;
         List<Estadio> estadios = new ArrayList<Estadio>();
         //Esta es la consulta sql que voy a usar para filtrar
         String sql = "select * from Estadio where Nombre = ? and Aforo = ?";
         try {
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+
             //Preparamos la consulta
-            PreparedStatement ps = conexion.prepareStatement(sql);
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, nombre);
             ps.setInt(2, aforo);
             //Una vez preparada la ejecutamos
@@ -116,17 +111,25 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            this.databaseConnection.disconnect();
         }
         return estadios;
     }
 
     public List<Partido> buscarPartidos(int duracion, int cod_Partido) {
+        Connection connection=null;
         List<Partido> partidos = new ArrayList<Partido>();
         //Esta es la consulta sql que voy a usar para filtrar
         String sql = "select * from Partido where Duracion = ? and Cod_Partido = ?";
         try {
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+
             //Preparamos la consulta
-            PreparedStatement ps = conexion.prepareStatement(sql);
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, duracion);
             ps.setInt(2, cod_Partido);
             //Una vez preparada la ejecutamos
@@ -137,10 +140,11 @@ public class DatabaseManager {
                 int codPartido = rs.getInt("Cod_Partido");
 
                 partidos.add(new Partido(duracionPartido, codPartido));
-
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            this.databaseConnection.disconnect();
         }
         return partidos;
     }
@@ -155,6 +159,7 @@ public class DatabaseManager {
      */
     public List<Jugador> obtenerJugadores(String campoOrdenacion, boolean asc
             , @NonNull Map<String, Object> parametros) throws SQLException {
+        Connection connection=null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         List<Jugador> jugadores = new ArrayList<>();
@@ -175,7 +180,11 @@ public class DatabaseManager {
             sql.append(" desc");
         }
         try {
-            ps = conexion.prepareStatement(sql.toString());
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+            ps = connection.prepareStatement(sql.toString());
             int i = 1;
 
             for (Object valor : parametros.values()) {
@@ -194,12 +203,15 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
         }
         return jugadores;
     }
 
     public List<Equipo> obtenerEquipos(String campoOrdenacion, boolean asc
             , @NonNull Map<String, Object> parametros) throws SQLException {
+        Connection connection=null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         List<Equipo> equipos = new ArrayList<>();
@@ -220,7 +232,11 @@ public class DatabaseManager {
             sql.append(" desc");
         }
         try {
-            ps = conexion.prepareStatement(sql.toString());
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+            ps = connection.prepareStatement(sql.toString());
             int i = 1;
 
             for (Object valor : parametros.values()) {
@@ -238,12 +254,15 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
         }
         return equipos;
     }
 
     public List<Partido> obtenerPartidos(String campoOrdenacion, boolean asc
             , @NonNull Map<String, Object> parametros) throws SQLException {
+        Connection connection=null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         List<Partido> partidos = new ArrayList<>();
@@ -264,7 +283,11 @@ public class DatabaseManager {
             sql.append(" desc");
         }
         try {
-            ps = conexion.prepareStatement(sql.toString());
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+            ps = connection.prepareStatement(sql.toString());
             int i = 1;
 
             for (Object valor : parametros.values()) {
@@ -281,12 +304,15 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
         }
         return partidos;
     }
 
     public List<Estadio> obtenerEstadios(String campoOrdenacion, boolean asc
             , @NonNull Map<String, Object> parametros) throws SQLException {
+        Connection connection=null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         List<Estadio> estadios = new ArrayList<>();
@@ -307,7 +333,11 @@ public class DatabaseManager {
             sql.append(" desc");
         }
         try {
-            ps = conexion.prepareStatement(sql.toString());
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+            ps = connection.prepareStatement(sql.toString());
             int i = 1;
 
             for (Object valor : parametros.values()) {
@@ -325,6 +355,8 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
         }
         return estadios;
     }
@@ -336,12 +368,18 @@ public class DatabaseManager {
      * False: Si no se ha actualizado nada
      */
     public boolean actualizarJugadores(Jugador jugador){
+        Connection connection=null;
     //Preparo la consulta
         String sql = "update Jugador set Nombre=?, Nombre_equipo=?, Edad=? where Cod_Jugador=?";
 
         //Se crea el PrepareStatement
         try {
-            PreparedStatement ps = conexion.prepareStatement(sql);
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, jugador.getNombre());
             ps.setString(2, jugador.getNombreEquipo());
             ps.setInt(3, jugador.getEdad());
@@ -357,15 +395,23 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
         }
     }
     public boolean actualizarEquipo(Equipo equipo){
+        Connection connection=null;
         //Preparo la consulta
         String sql = "update Equipo set Puntos=?, N_Jugadores=? where Nombre=?";
 
         //Se crea el PrepareStatement
         try {
-            PreparedStatement ps = conexion.prepareStatement(sql);
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, equipo.getPuntos());
             ps.setInt(2, equipo.getNumJugadores());
             ps.setString(3, equipo.getNombre());
@@ -380,15 +426,23 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
         }
     }
     public boolean actualizarPartido(Partido partido){
+        Connection connection=null;
         //Preparo la consulta
         String sql = "update Partido set Duracion=? where Cod_Partido=?";
 
         //Se crea el PrepareStatement
         try {
-            PreparedStatement ps = conexion.prepareStatement(sql);
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, partido.getDuracion());
             ps.setInt(2, partido.getCodPartido());
             int filasActualizadas = ps.executeUpdate();
@@ -402,15 +456,23 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
         }
     }
     public boolean actualizarEstadios(Estadio estadio){
+        Connection connection=null;
         //Preparo la consulta
         String sql = "update Estadio set Aforo=?, Fecha_Construccion=? where Nombre=?";
 
         //Se crea el PrepareStatement
         try {
-            PreparedStatement ps = conexion.prepareStatement(sql);
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, estadio.getAforo());
             ps.setDate(2, Date.valueOf(LocalDate.parse(estadio.getFechaConstruccion().toString())));
             ps.setString(3, estadio.getNombre());
@@ -425,6 +487,8 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
         }
     }
 
@@ -435,18 +499,24 @@ public class DatabaseManager {
      * registro
      */
     public boolean eliminarJugadores(int codJugador){
+        Connection connection=null;
     //Preparamos las consultas
         String sql = "delete from Jugador where Cod_Jugador = ?";
         String sql2 = "delete from Participa where Cod_Jugador = ?";
 
         //Creamos el PrepareStatement
         try {
-            PreparedStatement psParticipa = conexion.prepareStatement(sql2);
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+
+            PreparedStatement psParticipa = connection.prepareStatement(sql2);
             //Asigno los valores de los parámetros
             psParticipa.setInt(1, codJugador);
             psParticipa.executeUpdate();
 
-            PreparedStatement psJugador = conexion.prepareStatement(sql);
+            PreparedStatement psJugador = connection.prepareStatement(sql);
             //Asigno los valores de los parámetros
             psJugador.setInt(1, codJugador);
             int filasElminadas = psJugador.executeUpdate();
@@ -460,21 +530,29 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
         }
     }
     public boolean eliminarEquipos(String nombreEquipo){
+        Connection connection=null;
         //Preparamos las consultas
         String sql = "delete from Equipo where Nombre = ?";
         String sql2 = "delete from Juega where Nombre_Equipo = ?";
 
         //Creamos el PrepareStatement
         try {
-            PreparedStatement psJuega = conexion.prepareStatement(sql2);
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+
+            PreparedStatement psJuega = connection.prepareStatement(sql2);
             //Asigno los valores de los parámetros
             psJuega.setString(1, nombreEquipo);
             psJuega.executeUpdate();
 
-            PreparedStatement psEquipo = conexion.prepareStatement(sql);
+            PreparedStatement psEquipo = connection.prepareStatement(sql);
             //Asigno los valores de los parámetros
             psEquipo.setString(1, nombreEquipo);
             int filasElminadas = psEquipo.executeUpdate();
@@ -488,15 +566,23 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
         }
     }
     public boolean eliminarPartido(int codPartido){
+        Connection connection=null;
         //Preparamos las consultas
         String sql = "delete from Partido where Cod_Partido = ?";
 
         //Creamos el PrepareStatement
         try {
-            PreparedStatement psPartido = conexion.prepareStatement(sql);
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+
+            PreparedStatement psPartido = connection.prepareStatement(sql);
             //Asigno los valores de los parámetros
             psPartido.setInt(1, codPartido);
             int filasElminadas = psPartido.executeUpdate();
@@ -510,21 +596,29 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
         }
     }
     public boolean eliminarEstadios(String nombreEstadio){
+        Connection connection=null;
         //Preparamos las consultas
         String sql = "delete from Estadio where Nombre = ?";
         String sql2 = "delete from Juega where Nombre_Estadio = ?";
 
         //Creamos el PrepareStatement
         try {
-            PreparedStatement psJuega = conexion.prepareStatement(sql2);
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+
+            PreparedStatement psJuega = connection.prepareStatement(sql2);
             //Asigno los valores de los parámetros
             psJuega.setString(1, nombreEstadio);
             psJuega.executeUpdate();
 
-            PreparedStatement psEstadio = conexion.prepareStatement(sql);
+            PreparedStatement psEstadio = connection.prepareStatement(sql);
             //Asigno los valores de los parámetros
             psEstadio.setString(1, nombreEstadio);
             int filasElminadas = psEstadio.executeUpdate();
@@ -538,12 +632,20 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
         }
     }
     public boolean aniadirEquipos(List<Equipo> equipos){
+        Connection connection=null;
         String sql = "INSERT INTO Equipo(Puntos, Nombre, N_Jugadores) VALUES (?, ?, ?)";
         try {
-            PreparedStatement ps = conexion.prepareStatement(sql);
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+
+            PreparedStatement ps = connection.prepareStatement(sql);
             for (Equipo equipo: equipos) {
                 ps.setInt(1, equipo.getPuntos());
                 ps.setString(2, equipo.getNombre());
@@ -567,14 +669,31 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
         }
     }
+
+    /**
+     * Es un método que se utiliza para añadir registros a mi base de datos
+     *
+     * @param jugadores: Es una lista en la que se guardan los jugadores que se van a añadir
+     *                 a mi base de datos
+     * @return: Devuelve un true: si se han insertado y actualizado los datos en la tabla,
+     * y un false si no se ha realizado ninguna operacion en la base de datos
+     */
     public boolean aniadirJugadores(List<Jugador> jugadores){
+        Connection connection=null;
         String sqlJugador = "INSERT INTO Jugador(Cod_Jugador, Nombre, Nombre_equipo, Edad) VALUES (?, ?, ?, ?)";
         String sqlEquipo = "UPDATE Jugador SET Nombre_equipo = ? WHERE Cod_Jugador = ?";
         try {
-            PreparedStatement ps = conexion.prepareStatement(sqlJugador);
-            PreparedStatement psEquipo = conexion.prepareStatement(sqlEquipo);
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+
+            PreparedStatement ps = connection.prepareStatement(sqlJugador);
+            PreparedStatement psEquipo = connection.prepareStatement(sqlEquipo);
             for (Jugador jugador: jugadores) {
                 ps.setInt(1, jugador.getCodJugador());
                 ps.setString(2, jugador.getNombre());
@@ -608,8 +727,208 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
         }
     }
 
-}
+    public boolean aniadirPartidos(List<Partido> partidos){
+        Connection connection=null;
+        String sqlPartido = "INSERT INTO Partido(Duracion, Cod_Partido) VALUES (?, ?)";
+        try {
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
 
+            PreparedStatement ps = connection.prepareStatement(sqlPartido);
+            for (Partido partido: partidos) {
+                ps.setInt(1, partido.getDuracion());
+                ps.setInt(2, partido.getCodPartido());
+                ps.addBatch();
+
+            }
+            //Añado las filas/registros insertados en la base de datos y después
+            //con la clase Arrays sumo todos los registros
+            int[] filasInsertadas = ps.executeBatch();
+
+            int totalFilasInsertadasPartido = Arrays.stream(filasInsertadas).sum();
+
+            ps.clearParameters();
+
+            if (totalFilasInsertadasPartido > 0){
+                System.out.println("Se han insertado " + totalFilasInsertadasPartido +
+                        " filas en la tabla Partido");
+                return true;
+            } else {
+                System.out.println("No se ha insertado ningún registro en la base de datos");
+                return  false;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
+        }
+    }
+
+    public boolean aniadirEstadios(List<Estadio> estadios){
+        Connection connection=null;
+        String sqlPartido = "INSERT INTO Estadio(Aforo, Nombre, Fecha_Construccion) VALUES (?, ?, ?)";
+        try {
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+
+            PreparedStatement ps = connection.prepareStatement(sqlPartido);
+            for (Estadio estadio: estadios) {
+                ps.setInt(1, estadio.getAforo());
+                ps.setString(2, estadio.getNombre());
+                ps.setDate(3, Date.valueOf(LocalDate.parse(estadio.getFechaConstruccion().toString())));
+                ps.addBatch();
+
+            }
+            //Añado las filas/registros insertados en la base de datos y después
+            //con la clase Arrays sumo todos los registros
+            int[] filasInsertadas = ps.executeBatch();
+
+            int totalFilasInsertadasEstadio = Arrays.stream(filasInsertadas).sum();
+
+            ps.clearParameters();
+
+            if (totalFilasInsertadasEstadio > 0){
+                System.out.println("Se han insertado " + totalFilasInsertadasEstadio +
+                        " filas en la tabla Estadio");
+                return true;
+            } else {
+                System.out.println("No se ha insertado ningún registro en la base de datos");
+                return  false;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
+        }
+    }
+
+    /**
+     *
+     * @return: Devuelve los registros que se han quedado huerfanos
+     */
+    public List<Jugador> comprobarIntegridadJug(){
+        Connection connection=null;
+List<Jugador> registrosHuerfanos = new ArrayList<>();
+String sql = "select * from Jugador where Nombre_Equipo not in (select Nombre from Equipo)";
+
+    try {
+        //se abre la conexión usando la cadena de conexión guardada en el gestor
+        //de conexión
+        connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+        this.databaseConnection.setConexion(connection);
+
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()){
+    Jugador jugador = new Jugador();
+    jugador.setCodJugador(rs.getInt("Cod_Jugador"));
+    jugador.setNombre(rs.getString("Nombre"));
+    jugador.setNombreEquipo(rs.getString("Nombre_equipo"));
+    jugador.setEdad(rs.getInt("Edad"));
+    registrosHuerfanos.add(jugador);
+
+        }
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    } finally {
+        this.databaseConnection.disconnect();
+    }
+    return registrosHuerfanos;
+}
+    public List<Equipo> comprobarIntegridadEq(){
+        Connection connection=null;
+        List<Equipo> registrosHuerfanos = new ArrayList<>();
+        String sql = "select * from Equipo where Nombre not in (select Nombre_Equipo from Participa)";
+
+        try {
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()){
+                Equipo equipo = new Equipo();
+                equipo.setPuntos(rs.getInt("Puntos"));
+                equipo.setNombre(rs.getString("Nombre"));
+                equipo.setNumJugadores(rs.getInt("N_Jugadores"));
+                registrosHuerfanos.add(equipo);
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
+        }
+        return registrosHuerfanos;
+    }
+    public List<Partido> comprobarIntegridadPar(){
+        Connection connection=null;
+        List<Partido> registrosHuerfanos = new ArrayList<>();
+        String sql = "select * from Partido where Cod_Partido not in (select Cod_Partido from Juega)";
+
+        try {
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()){
+                Partido partido = new Partido();
+                partido.setDuracion(rs.getInt("Duracion"));
+                partido.setCodPartido(rs.getInt("Cod_Partido"));
+                registrosHuerfanos.add(partido);
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
+        }
+        return registrosHuerfanos;
+    }
+    public List<Estadio> comprobarIntegridadEst(){
+        Connection connection=null;
+        List<Estadio> registrosHuerfanos = new ArrayList<>();
+        String sql = "select * from Estadio where Nombre not in (select Nombre_Estadio from Juega)";
+
+        try {
+            //se abre la conexión usando la cadena de conexión guardada en el gestor
+            //de conexión
+            connection = DriverManager.getConnection(this.databaseConnection.getConnectionString());
+            this.databaseConnection.setConexion(connection);
+
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()){
+                Estadio estadio = new Estadio();
+                estadio.setAforo(rs.getInt("Aforo"));
+                estadio.setNombre(rs.getString("Nombre"));
+                estadio.setFechaConstruccion(Date.valueOf(LocalDate.parse(rs.getDate("Fecha_Construccion").toLocalDate().toString())).toLocalDate());
+                registrosHuerfanos.add(estadio);
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            this.databaseConnection.disconnect();
+        }
+        return registrosHuerfanos;
+    }
+}
