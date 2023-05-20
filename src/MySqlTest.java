@@ -32,7 +32,7 @@ public class MySqlTest {
 
         //System.out.println(dm.buscarJugadores("Benzema", 35));
         //System.out.println(dm2.buscar("Equipo", parametros));
-        System.out.println(dm.comprobarIntegridadEq());
+        System.out.println(dm.importarXmlEst("Estadio.xml"));
         //System.out.println(dm.aniadirJugadores(jugadores));
     }
 }
