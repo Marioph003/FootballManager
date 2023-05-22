@@ -1,6 +1,9 @@
-DROP database IF exists Futbol;
-create database Futbol;
-USE Futbol;
+DROP TABLE IF EXISTS Juega;
+DROP TABLE IF EXISTS Participa;
+DROP TABLE IF EXISTS Jugador;
+DROP TABLE IF EXISTS Equipo;
+DROP TABLE IF EXISTS Partido;
+DROP TABLE IF EXISTS Estadio;
 
 create table Equipo(
 Puntos int,
@@ -57,7 +60,7 @@ alter table Equipo add constraint puntaje check (Puntos <= 90);
 
 /*3. Esta restricción la he incluido para controlar la edad de los jugadores que van a
 participar en la competición*/
-alter table Jugadores add constraint limite_edad check (Edad between 18 and 35);
+alter table Jugador add constraint limite_edad check (Edad between 18 and 35);
 
 /*4. Esta restricción es para establecer que el número de goles y de asistencias no sea negativo*/
 alter table Participa add constraint menor_cero check (N_Goles != 0);
@@ -73,7 +76,7 @@ insert into Equipo values
 (53, 'Sevilla FC', 32),
 (77, 'Atletico de Madrid',	32);
 
-insert into Jugadores values
+insert into Jugador values
 (1, 'Ansu Fati' , 'FC Barcelona',18),
 (2,'Benzema', 'Real Madrid',35),
 (3, 'Fekir', 'Real Betis Balonpie',20),
@@ -102,9 +105,8 @@ insert into Estadio values
 (68456, 'Civitas Metropolitano', '1994-09-04');
 
 insert into Juega values
-('FC Barcelona', 1, 'Camp Nou'),
-('Real Madrid', 2, 'Santiago Bernabeu'),
-('Real Betis Balonpie', 3, 'Benito Villamarin'),
-('Sevilla FC', 4, 'Sanchez Pizjuan'),
-('Atletico de Madrid', 5, 'Civitas Metropolitano');
-
+('FC Barcelona', 2, 'Sanchez Pizjuan'),
+('Real Madrid', 3, 'Camp Nou'),
+('Real Betis Balonpie', 1, 'Santiago Bernabeu'),
+('Sevilla FC', 5, 'Civitas Metropolitano'),
+('Atletico de Madrid', 4, 'Benito Villamarin');
