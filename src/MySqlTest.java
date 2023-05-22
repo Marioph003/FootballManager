@@ -5,6 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Esta clase la utilizo para probar todos los
+ * métodos que me hagan falta de las clases
+ *
+ * @author Mario
+ * @version 1.0
+ */
 public class MySqlTest {
     public static void main(String[] args) throws SQLException {
         DatabaseConnection dc = null;

@@ -1,5 +1,11 @@
 import java.util.Scanner;
 
+/**
+ * Clase de la entidad Jugador
+ *
+ * @author Mario
+ * @version 1.0
+ */
 public class Jugador implements FootballManagerInterface {
     public static final String TABLA = "Jugador";
     private int codJugador;

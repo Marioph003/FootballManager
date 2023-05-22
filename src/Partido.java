@@ -1,5 +1,10 @@
-import java.util.Scanner;
 
+/**
+ * Clase de la entidad Partido
+ *
+ * @author Mario
+ * @version 1.0
+ */
 public class Partido implements FootballManagerInterface {
     public static final String TABLA = "Partido";
     private int codPartido;

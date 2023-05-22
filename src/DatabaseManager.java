@@ -21,15 +21,35 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Clase para manejar la base de datos con distintos métodos
+ *
+ * @author Mario
+ * @version 1.0
+ */
 public class DatabaseManager {
     private DatabaseConnection databaseConnection;
     private Connection conexion;
 
+    /**
+     * Constructor de la clase DatabaseManager
+     *
+     * @param connection
+     */
     public DatabaseManager(@NonNull DatabaseConnection connection) {
         this.databaseConnection = connection;
     }
 
-    //Metodo para buscar un jugador por 2 parametros
+    /**
+     * Metodo para buscar un jugador por 2 parametros
+     *
+     * @param nombre: especificar el nombre del jugador que quieres buscar en la
+     *              base de datos
+     * @param edad: especificar la edad del jugador que quieres buscar en la
+     *            base de datos
+     * @return: Devuelve una lista de jugadores que contiene los registros que
+     * cumplen los requisitos de la busqueda o filtrado
+     */
     public List<Jugador> buscarJugadores(String nombre, int edad) {
         Connection connection = null;
         List<Jugador> jugadores = new ArrayList<Jugador>();
@@ -167,6 +187,8 @@ public class DatabaseManager {
     }
 
     /**
+     * Metodo para obtener Jugadores
+     *
      * @param campoOrdenacion: Lo utilizo para especificar el campo por el cual voy a ordenar
      *                         Ej(NombreEquipo). Este seria un ejemplo de campo de ordenacion
      * @param asc:             Lo utilizo para especificar si es ascendente o descendente por lo que voy a ordenar
@@ -379,7 +401,10 @@ public class DatabaseManager {
     }
 
     /**
+     * Metodo para actualizar jugadores
+     *
      * @param jugador: Aqui recojo la instancia del jugador
+     *
      * @return: Voy a devolver un boolean, True: Si se ha actualizado almenos 1 fila,
      * False: Si no se ha actualizado nada
      */
@@ -515,6 +540,7 @@ public class DatabaseManager {
      * Elimina el jugador cuyo código coincide con el que se pasa como parámetro
      *
      * @param codJugador: Parametro para saber que registro de la base de datos voy a eliminar
+     *
      * @return: voy a devolver un booleano, que si devuelve true quiere decir que se ha eliminado
      * registro
      */
@@ -703,6 +729,7 @@ public class DatabaseManager {
      *
      * @param jugadores: Es una lista en la que se guardan los jugadores que se van a añadir
      *                   a mi base de datos
+     *
      * @return: Devuelve un true: si se han insertado y actualizado los datos en la tabla,
      * y un false si no se ha realizado ninguna operacion en la base de datos
      */
@@ -836,6 +863,9 @@ public class DatabaseManager {
     }
 
     /**
+     * Metodo para comprobar la integridad referencial de las
+     * tablas
+     *
      * @return: Devuelve los registros que se han quedado huerfanos
      */
     public List<Jugador> comprobarIntegridadJug() {
@@ -1294,6 +1324,7 @@ public class DatabaseManager {
      * Metodo para exportar un XML con los datos de la tabla Jugador
      *
      * @param rutaArchivo: Parámetro para especificar la ruta del archivo XML
+     *
      * @return Devuelve true si la importacion se ha realizado con exito, y
      *       false si la importación ha fallado
      */

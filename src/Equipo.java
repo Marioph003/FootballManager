@@ -2,6 +2,12 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Clase de la entidad Equipo
+ *
+ * @author Mario
+ * @version 1.0
+ */
 public class Equipo implements FootballManagerInterface {
     public static final String TABLA = "Equipo";
     private int puntos;

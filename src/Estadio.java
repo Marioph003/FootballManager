@@ -1,6 +1,11 @@
 import java.time.LocalDate;
-import java.util.Scanner;
 
+/**
+ * Clase de la entidad Estadio
+ *
+ * @author Mario
+ * @version 1.0
+ */
 public class Estadio implements FootballManagerInterface {
     public static final String TABLA = "Estadio";
     private int aforo;
